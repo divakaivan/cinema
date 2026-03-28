@@ -3,6 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/divakaivan/cinema/internal/adapters/redis"
+	"github.com/divakaivan/cinema/internal/booking"
 	"github.com/divakaivan/cinema/internal/utils"
 )
 
@@ -10,8 +13,12 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /movies", listMovies)
-
 	mux.Handle("GET /", http.FileServer(http.Dir("static")))
+
+	store := booking.NewRedisStore(redis.NewClient("localhost:6379"))
+	svc := booking.NewService(store)
+	bookingHandler := booking.NewHandler(svc)
+	mux.HandleFunc("GET /movies/{movieID}/seats", bookingHandler.ListSeats)
 
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
@@ -28,8 +35,8 @@ func listMovies(w http.ResponseWriter, r *http.Request) {
 }
 
 type movieResponse struct {
-	ID string `json:"id"`
-	Title string `json:"title"`
-	Rows int `json:"rows"`
-	SeatsPerRow int `json:"seats_per_row"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Rows        int    `json:"rows"`
+	SeatsPerRow int    `json:"seats_per_row"`
 }
