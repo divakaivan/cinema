@@ -1,0 +1,34 @@
+# Binaries
+cinema
+*.exe
+*.exe~
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Test binaries
+*.test
+*.out
+
+# Dependency directories
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Build artifacts
+dist/
+build/
+
+# Redis dumps
+dump.rdb
